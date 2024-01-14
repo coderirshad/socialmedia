@@ -4,9 +4,10 @@
         </h1>
         <%if(user.id==Profile_user.id){%>
           <!-if user matches then show the form->
-          <form action="/users/update/<%-profile_user.id%>" method="post">
+          <form action="/users/update/<%-profile_user.id%>" method="post" enctype="multipart/form-data">
             <input type="text" name="name" placeholder="Your Name" value="<%=Profile_user.name%>"required>
             <input type="email" name="email" placeholder="Your email" value="<%=Profile_user.email%>"required>
+            <input type="file" name="avatar" />
          <input type="submit" value="update">
           </form>
       <% }%> else{%>
@@ -15,5 +16,4 @@
     <%}%>
       
 
-        <p><%= user.name %></p>
-        <p><%= user.email %></p>
+       
