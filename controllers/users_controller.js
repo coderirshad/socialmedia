@@ -80,28 +80,67 @@ module.exports.signIn = function(req, res){
 }
 
 // get the sign up data
-module.exports.create = function(req, res){
+module.exports.create = async function(req, res){
     if (req.body.password != req.body.confirm_password){
         req.flash('error', 'Passwords do not match');
         return res.redirect('back');
     }
 
-    User.findOne({email: req.body.email}, function(err, user){
-        if(err){req.flash('error', err); return}
+//     User.findOne({email: req.body.email}, function(err, user){
+//         if(err){req.flash('error', err); return}
 
-        if (!user){
-            User.create(req.body, function(err, user){
-                if(err){req.flash('error', err); return}
+//         if (!user){
+//             User.create(req.body, function(err, user){
+//                 if(err){req.flash('error', err); return}
 
-                return res.redirect('/users/sign-in');
-            })
-        }else{
-            req.flash('success', 'You have signed up, login to continue!');
-            return res.redirect('back');
-        }
+//                 return res.redirect('/users/sign-in');
+//             })
+//         }else{
+//             req.flash('success', 'You have signed up, login to continue!');
+//             return res.redirect('back');
+//         }
 
-    });
+//     });
+// }
+try {
+      const user = await User.findOne({ email: req.body.email });
+    
+      if (user) {
+        // User already exists
+        req.flash('success', 'You have signed up, login to continue!');
+        return res.redirect('back');
+      } else {
+        // User does not exist, create a new user
+        await User.create(req.body);
+       
+        return res.redirect('/users/sign-in');
+      }
+    } catch (err) {
+      req.flash('error', err);
+      return res.redirect('back');
+    }
 }
+
+
+
+// try {
+//   const user = await User.findOne({ email: req.body.email });
+
+//   if (user) {
+//     // User already exists
+//     req.flash('success', 'You have signed up, login to continue!');
+//     return res.redirect('back');
+//   } else {
+//     // User does not exist, create a new user
+//     await User.create(req.body);
+//     return res.redirect('/users/sign-in');
+//   }
+// } catch (err) {
+//   req.flash('error', err);
+//   return res.redirect('back');
+// }
+// }
+
 
 
 // sign in and create a session for the user
